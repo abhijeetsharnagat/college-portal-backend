@@ -1,25 +1,32 @@
+//controllers/postConroller
 const Post = require('../models/Post');
+const upload = require('../upload/upload');
 
 // Create a new post
-exports.createPost = async (req, res) => {
-  const { title, content } = req.body;
-  const userId = req.user.id;
-
-  try {
-    const newPost = new Post({
-      title,
-      content,
-      user: userId,
-    });
-
-    const post = await newPost.save();
-
-    res.json(post);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
-  }
-};
+exports.createPost = [
+  upload.single('image'), // Add this line to handle the image upload
+  async (req, res) => {
+     const { title, content } = req.body;
+     const userId = req.user.id;
+     const image = req.file ? req.file.path : ''; // Get the path of the uploaded image
+ 
+     try {
+       const newPost = new Post({
+         title,
+         content,
+         user: userId,
+         image, // Add the image path to the new post
+       });
+ 
+       const post = await newPost.save();
+ 
+       res.json(post);
+     } catch (err) {
+       console.error(err.message);
+       res.status(500).send('Server error');
+     }
+  },
+ ];
 
 // Get all posts
 exports.getAllPosts = async (req, res) => {

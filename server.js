@@ -1,8 +1,11 @@
+//server.js
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const connectDB = require('./src/config/db');
+// In your main server file (e.g., app.js or server.js)
+app.use('/upload', express.static('uploads'));
 
 const app = express();
 

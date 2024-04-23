@@ -1,3 +1,4 @@
+//models/Post.js
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -9,11 +10,11 @@ const postSchema = new Schema({
   },
   title: {
     type: String,
-    required: true,
+ 
   },
   content: {
     type: String,
-    required: true,
+    
   },
   likes: [
     {
@@ -31,6 +32,10 @@ const postSchema = new Schema({
         type: String,
         required: true,
       },
+      image: {
+        type: String,
+        default: '', // Default value is an empty string
+     },
       date: {
         type: Date,
         default: Date.now,

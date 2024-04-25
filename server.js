@@ -1,16 +1,18 @@
-//server.js
+// server.js
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
-const connectDB = require('./src/config/db');
-// In your main server file (e.g., app.js or server.js)
-app.use('/upload', express.static('uploads'));
-
-const app = express();
+const mongoose = require('mongoose');
 
 // Connect to MongoDB
-connectDB();
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+
+const conn = mongoose.connection;
+conn.once('open', () => {
+ console.log('MongoDB database connection established successfully');
+});
+
+const app = express();
 
 // Middleware
 app.use(express.json());
@@ -28,5 +30,5 @@ app.use('/api/users', userRoutes);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+ console.log(`Server running on port ${PORT}`);
 });

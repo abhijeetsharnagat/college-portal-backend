@@ -16,6 +16,10 @@ const postSchema = new Schema({
     type: String,
     
   },
+  image: {
+    type: String,
+    default: '', // Default value is an empty string
+ },
   likes: [
     {
       type: Schema.Types.ObjectId,
@@ -32,10 +36,7 @@ const postSchema = new Schema({
         type: String,
         required: true,
       },
-      image: {
-        type: String,
-        default: '', // Default value is an empty string
-     },
+  
       date: {
         type: Date,
         default: Date.now,

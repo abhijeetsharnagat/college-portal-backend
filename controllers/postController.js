@@ -1,33 +1,56 @@
 //controllers/postConroller
 const Post = require('../models/Post');
-const upload = require('../upload/upload');
+const multer = require('multer');
+const GridFsStorage = require('multer-gridfs-storage').GridFsStorage;
+const crypto = require('crypto');
+
+// Configure multer storage
+const storage = new GridFsStorage({
+ url: process.env.MONGODB_URI, // Ensure this is correctly set
+ file: (req, file) => {
+    return new Promise((resolve, reject) => {
+      crypto.randomBytes(16, (err, buf) => {
+        if (err) {
+          return reject(err);
+        }
+        const filename = file.originalname;
+        const fileInfo = {
+          filename: filename,
+          bucketName: 'uploads'
+        };
+        resolve(fileInfo);
+      });
+    });
+ }
+});
+
+const upload = multer({ storage });
 
 // Create a new post
 exports.createPost = [
-  upload.single('image'), // Add this line to handle the image upload
+  upload.single('image'),
   async (req, res) => {
-     const { title, content } = req.body;
-     const userId = req.user.id;
-     const image = req.file ? req.file.path : ''; // Get the path of the uploaded image
- 
-     try {
-       const newPost = new Post({
-         title,
-         content,
-         user: userId,
-         image, // Add the image path to the new post
-       });
- 
-       const post = await newPost.save();
- 
-       res.json(post);
-     } catch (err) {
-       console.error(err.message);
-       res.status(500).send('Server error');
-     }
-  },
- ];
+    const { title, content } = req.body;
+    const userId = req.user.id;
+    const image = req.file ? req.file.id : ''; // Get the _id of the uploaded file
 
+    try {
+      const newPost = new Post({
+        title,
+        content,
+        user: userId,
+        image, // Save the file _id
+      });
+
+      const post = await newPost.save();
+
+      res.json({ ...post._doc, image: post.image._id }); // Return the _id of the saved file
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  },
+];
 // Get all posts
 exports.getAllPosts = async (req, res) => {
   try {

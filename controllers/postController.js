@@ -28,6 +28,7 @@ const upload = multer({ storage });
 
 // Create a new post
 exports.createPost = [
+ upload.single('image').array('image', 10), // <-- Add this line
   upload.single('image'),
   async (req, res) => {
     console.log('req.file:', req.file);

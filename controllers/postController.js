@@ -30,6 +30,7 @@ const upload = multer({ storage });
 exports.createPost = [
   upload.single('image'),
   async (req, res) => {
+    console.log('req.file:', req.file);
     const { title, content } = req.body;
     const userId = req.user.id;
     const image = req.file ? req.file.id : ''; // Get the _id of the uploaded file
